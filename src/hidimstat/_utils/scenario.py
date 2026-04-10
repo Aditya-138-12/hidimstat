@@ -3,7 +3,7 @@ from scipy import ndimage
 from scipy.linalg import toeplitz
 
 
-def _generate_2D_weight(shape, roi_size):
+def _generate_2D_weight(shape: tuple[int, int], roi_size: int) -> np.ndarray:
     """
     Create a 2D weight map with four ROIs (Regions of Interest) in the corners.
 
@@ -47,7 +47,7 @@ def _generate_2D_weight(shape, roi_size):
     return w
 
 
-def _generate_3D_weight(shape, roi_size):
+def _generate_3D_weight(shape: tuple[int, int, int], roi_size: int) -> np.ndarray:
     """
     Create a 3D weight map with five ROIs (Regions of Interest) in specific locations.
 
@@ -96,13 +96,13 @@ def _generate_3D_weight(shape, roi_size):
 
 
 def multivariate_simulation_spatial(
-    n_samples=100,
-    shape=(12, 12),
-    roi_size=2,
-    signal_noise_ratio=1.0,
-    smooth_X=1.0,
-    seed=0,
-):
+    n_samples: int =100,
+    shape: tuple[int, int] =(12, 12),
+    roi_size: int =2,
+    signal_noise_ratio: float =1.0,
+    smooth_X: float =1.0,
+    seed: int =0,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Generate a multivariate simulation with 2D or 3D data.
 
@@ -179,18 +179,18 @@ def multivariate_simulation_spatial(
 
 
 def multivariate_simulation(
-    n_samples,
-    n_features,
-    n_targets=None,
-    support_size=10,
-    rho=0,
-    value=1.0,
-    signal_noise_ratio=10.0,
-    rho_serial=0.0,
-    shuffle=False,
-    continuous_support=False,
-    seed=None,
-):
+    n_samples: int,
+    n_features: int,
+    n_targets: int | None =None,
+    support_size: int =10,
+    rho: float =0.0,
+    value: float =1.0,
+    signal_noise_ratio: float =10.0,
+    rho_serial:float =0.0,
+    shuffle: bool =False,
+    continuous_support: bool =False,
+    seed: int | None =None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Generate a linear simulation with a Toeplitz covariance structure and optional temporal correlation.
 
@@ -205,7 +205,7 @@ def multivariate_simulation(
         If integer > 0, generates multivariate target data.
     support_size : int, default=10
         Number of non-zero coefficients in beta.
-    rho : float, default=0
+    rho : float, default=0.0
         Feature correlation coefficient for Toeplitz covariance matrix.
     value : float, default=1.0
         Value assigned to non-zero coefficients in beta.
@@ -301,7 +301,7 @@ def multivariate_simulation(
     return X, y, beta_true, noise
 
 
-def empirical_snr(X, y, beta, noise=None):
+def empirical_snr(X: np.ndarray, y: np.ndarray, beta: np.ndarray, noise: np.ndarray | None =None) -> float:
     """
     Compute the empirical signal-to-noise ratio (SNR) for
     the linear model y = X @ beta + noise.

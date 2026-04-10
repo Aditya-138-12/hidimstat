@@ -1,8 +1,9 @@
 import numpy as np
 from scipy.stats import norm
 
-
-def _replace_infinity(x, replace_val=None, method="times-two"):
+from typing import Literal
+from collections.abc import Sequence
+def _replace_infinity(x: Sequence, replace_val: float | None =None, method: Literal['times-two', 'plus-one'] ="times-two") -> Sequence:
     """
     Replace infinity values in array with finite values.
 
@@ -49,7 +50,7 @@ def _replace_infinity(x, replace_val=None, method="times-two"):
     return x_new
 
 
-def pval_corr_from_pval(one_sided_pval):
+def pval_corr_from_pval(one_sided_pval: np.ndarray) -> np.ndarray:
     """Computing one-sided p-values corrected for multiple testing
     from simple testing one-sided p-values.
 
@@ -80,7 +81,7 @@ def pval_corr_from_pval(one_sided_pval):
     return one_sided_pval_corr
 
 
-def pval_from_scale(beta, scale, distribution="norm", eps=1e-14):
+def pval_from_scale(beta: np.ndarray, scale: np.ndarray, distribution: str | None ="norm", eps: float | None =1e-14) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Computing one-sided p-values from the value of the parameter
     and its scale.
 
@@ -96,7 +97,7 @@ def pval_from_scale(beta, scale, distribution="norm", eps=1e-14):
         Type of distribution assumed for the underlying estimator.
         'norm' means normal and is the only value accepted at the moment.
 
-    eps : float, optional
+    eps : float, optional (default=1e-14)
         Machine-precision regularization in the computation of the p-values.
 
     Returns
@@ -139,7 +140,7 @@ def pval_from_scale(beta, scale, distribution="norm", eps=1e-14):
     return pval, pval_corr, one_minus_pval, one_minus_pval_corr
 
 
-def zscore_from_cb(cb_min, cb_max, confidence=0.95, distribution="norm"):
+def zscore_from_cb(cb_min: np.ndarray, cb_max: np.ndarray, confidence: float | None =0.95, distribution: str | None ="norm") -> np.ndarray:
     """Computing z-scores from confidence intervals.
 
     Parameters
@@ -174,8 +175,8 @@ def zscore_from_cb(cb_min, cb_max, confidence=0.95, distribution="norm"):
 
 
 def pval_from_cb(
-    cb_min, cb_max, confidence=0.95, distribution="norm", eps=1e-14
-):
+    cb_min, cb_max: np.ndarray, confidence: float | None =0.95, distribution: str | None ="norm", eps: float | None=1e-14
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Computing one-sided p-values from confidence intervals.
 
     Parameters
@@ -194,7 +195,7 @@ def pval_from_cb(
         Type of distribution assumed for the underlying estimator.
         'norm' means normal and is the only value accepted at the moment.
 
-    eps : float, optional
+    eps : float, optional (default=1e-14)
         Machine-precision regularization in the computation of the p-values.
 
     Returns
@@ -230,7 +231,7 @@ def pval_from_cb(
     return pval, pval_corr, one_minus_pval, one_minus_pval_corr
 
 
-def two_sided_pval_from_zscore(zscore, distribution="norm"):
+def two_sided_pval_from_zscore(zscore: np.ndarray, distribution: str | None ="norm") -> tuple[np.ndarray, np.ndarray]:
     """Computing two-sided p-values from z-scores.
 
     Parameters
@@ -261,8 +262,8 @@ def two_sided_pval_from_zscore(zscore, distribution="norm"):
 
 
 def two_sided_pval_from_cb(
-    cb_min, cb_max, confidence=0.95, distribution="norm"
-):
+    cb_min: np.ndarray, cb_max: np.ndarray, confidence: float | None =0.95, distribution: str | None ="norm"
+) -> tuple[np.ndarray, np.ndarray]:
     """Computing two-sided p-values from confidence intervals.
 
     Parameters
@@ -300,7 +301,7 @@ def two_sided_pval_from_cb(
     return two_sided_pval, two_sided_pval_corr
 
 
-def zscore_from_pval(pval, one_minus_pval=None, distribution="norm"):
+def zscore_from_pval(pval: np.ndarray, one_minus_pval: np.ndarray | None =None, distribution: str | None ="norm") -> np.ndarray:
     """Computing z-scores from one-sided p-values.
 
     Parameters
@@ -335,8 +336,8 @@ def zscore_from_pval(pval, one_minus_pval=None, distribution="norm"):
 
 
 def pval_from_two_sided_pval_and_sign(
-    two_sided_pval, parameter_sign, eps=1e-14
-):
+    two_sided_pval: np.ndarray, parameter_sign: np.ndarray, eps: float | None =1e-14
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Computing one-sided p-values from two-sided p-value and parameter sign.
 
     Parameters
@@ -347,7 +348,7 @@ def pval_from_two_sided_pval_and_sign(
     parameter_sign : ndarray, shape (n_features,)
         Estimated signs for the parameters.
 
-    eps : float, optional
+    eps : float, optional (default=1e-14)
         Machine-precision regularization in the computation of the p-values.
 
     Returns
@@ -388,7 +389,7 @@ def pval_from_two_sided_pval_and_sign(
     return pval, pval_corr, one_minus_pval, one_minus_pval_corr
 
 
-def two_sided_pval_from_pval(pval, one_minus_pval=None, distribution="norm"):
+def two_sided_pval_from_pval(pval: np.ndarray, one_minus_pval: np.ndarray | None =None, distribution: str | None ="norm") -> tuple[np.ndarray, np.ndarray]:
     """Computing two-sided p-value from one-sided p-values.
 
     Parameters

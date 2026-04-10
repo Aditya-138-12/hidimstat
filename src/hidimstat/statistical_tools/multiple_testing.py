@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def fdp_power(selected, ground_truth):
+def fdp_power(selected: np.ndarray, ground_truth: np.ndarray) -> tuple[float, float]:
     """
     Calculate False Discovery Proportion and statistical power
 
@@ -31,8 +31,8 @@ def fdp_power(selected, ground_truth):
 
     return fdp, power
 
-
-def fdr_threshold(pvals, fdr=0.1, method="bhq", reshaping_function=None):
+from typing import Callable, Literal
+def fdr_threshold(pvals: np.ndarray, fdr: float =0.1, method: Literal['bhq', 'bhy', 'ebh'] ="bhq", reshaping_function: Callable =None) -> float:
     """
     Calculate threshold for False Discovery Rate control methods.
 
@@ -72,7 +72,7 @@ def fdr_threshold(pvals, fdr=0.1, method="bhq", reshaping_function=None):
     return threshold
 
 
-def _bhq_threshold(pvals, fdr=0.1):
+def _bhq_threshold(pvals: np.ndarray, fdr: float =0.1) -> float:
     """
     Standard Benjamini-Hochberg
     for controlling False discovery rate
@@ -111,7 +111,7 @@ def _bhq_threshold(pvals, fdr=0.1):
     return threshold
 
 
-def _ebh_threshold(evals, fdr=0.1):
+def _ebh_threshold(evals: np.ndarray, fdr: float =0.1) -> float:
     """
     e-BH procedure for FDR control described in equation 5 :footcite:`wang2022false`
 
@@ -145,7 +145,7 @@ def _ebh_threshold(evals, fdr=0.1):
     return threshold
 
 
-def _bhy_threshold(pvals, reshaping_function=None, fdr=0.1):
+def _bhy_threshold(pvals: np.ndarray, reshaping_function: Callable | None =None, fdr: float =0.1) -> float:
     """
         Benjamini-Hochberg-Yekutieli  procedure for
     controlling FDR

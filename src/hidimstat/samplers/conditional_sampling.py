@@ -43,10 +43,10 @@ def _check_data_type(
 class ConditionalSampler:
     def __init__(
         self,
-        model_regression=None,
-        model_categorical=None,
+        model_regression: object | None =None,
+        model_categorical: object | None =None,
         data_type: str = "auto",
-        categorical_max_cardinality=10,
+        categorical_max_cardinality: int =10,
     ):
         """
         Class use to sample from the conditional distribution $p(X^j | X^{-j})$.
@@ -122,8 +122,8 @@ class ConditionalSampler:
         self,
         X: np.ndarray,
         y: np.ndarray,
-        n_samples: int = 1,
-        random_state=None,
+        n_samples: int | None = 1,
+        random_state: int | None =None,
     ) -> np.ndarray:
         """
         Sample from the conditional distribution $p(X^j | X^{-j})$.

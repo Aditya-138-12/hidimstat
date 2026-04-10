@@ -16,7 +16,7 @@ from hidimstat.base_variable_importance import (
     GroupVariableImportanceMixin,
 )
 
-
+from collections.abc import Sequence
 class BasePerturbation(BaseVariableImportance, GroupVariableImportanceMixin):
     """
     Abstract base class for model-agnostic variable importance measures using
@@ -24,7 +24,7 @@ class BasePerturbation(BaseVariableImportance, GroupVariableImportanceMixin):
 
     Parameters
     ----------
-    estimator : sklearn-compatible estimator
+    estimator : sklearn-compatible estimator, optional
         The estimator that will be used for predictions.
         It will be automatically fitted if it has not already been.
     method : str, default="predict"
@@ -36,7 +36,7 @@ class BasePerturbation(BaseVariableImportance, GroupVariableImportanceMixin):
         to the original model.
     n_permutations : int, default=50
         Number of permutations for each feature group.
-    statistical_test : callable or str, default="nb-ttest"
+    statistical_test : callable or str, default="ttest"
         Statistical test function for computing p-values from importance scores.
     features_groups : dict or None, default=None
         Mapping of group names to lists of feature indices or names. If None, groups are inferred.
@@ -68,14 +68,14 @@ class BasePerturbation(BaseVariableImportance, GroupVariableImportanceMixin):
 
     def __init__(
         self,
-        estimator=None,
+        estimator: object | None =None,
         method: str = "predict",
         loss: callable = mean_squared_error,
         n_permutations: int = 50,
-        statistical_test="ttest",
-        features_groups=None,
+        statistical_test: str | callable ="ttest",
+        features_groups: dict | None =None,
         n_jobs: int = 1,
-        random_state=None,
+        random_state: int | None =None,
     ):
         super().__init__()
         GroupVariableImportanceMixin.__init__(
@@ -94,7 +94,7 @@ class BasePerturbation(BaseVariableImportance, GroupVariableImportanceMixin):
         self._groups_ids = None
         self.random_state = random_state
 
-    def fit(self, X, y=None):
+    def fit(self, X: Sequence, y: Sequence | None =None) -> object:
         """
         Initialize feature groups based on input data.
 
@@ -139,7 +139,7 @@ class BasePerturbation(BaseVariableImportance, GroupVariableImportanceMixin):
         """Check compatibility between input data and fitted model."""
         GroupVariableImportanceMixin._check_compatibility(self, X)
 
-    def _predict(self, X):
+    def _predict(self, X: Sequence) -> Sequence:
         """
         Compute the predictions after perturbation of the data for each group of
         variables.
@@ -169,7 +169,7 @@ class BasePerturbation(BaseVariableImportance, GroupVariableImportanceMixin):
 
         return np.stack(out_list, axis=0)
 
-    def importance(self, X, y):
+    def importance(self, X: Sequence, y: Sequence) -> np.ndarray:
         """
         Compute the importance scores for each group of covariates.
 
@@ -234,7 +234,7 @@ class BasePerturbation(BaseVariableImportance, GroupVariableImportanceMixin):
         )
         return self.importances_
 
-    def fit_importance(self, X, y):
+    def fit_importance(self, X: Sequence, y: Sequence) -> np.ndarray:
         """
         Fits the model to the data and computes feature importance scores.
         Convenience method that combines fit() and importance() into a single call.
@@ -275,8 +275,8 @@ class BasePerturbation(BaseVariableImportance, GroupVariableImportanceMixin):
             )
 
     def _joblib_predict_one_features_group(
-        self, X, features_group_id, random_state=None
-    ):
+        self, X: Sequence, features_group_id: int, random_state: int | None =None
+    ) -> np.ndarray:
         """
         Compute the predictions after perturbation of the data for a given
         group of variables. This function is parallelized.
@@ -287,7 +287,7 @@ class BasePerturbation(BaseVariableImportance, GroupVariableImportanceMixin):
             The input samples.
         features_group_id: int
             The index of the group of variables.
-        random_state:
+        random_state: int, optional
             The random state to use for sampling.
         """
         features_group_ids = self._features_groups_ids[features_group_id]
@@ -332,10 +332,10 @@ class BasePerturbationCV(BaseVariableImportance):
 
     Parameters
     ----------
-    estimators: list of sklearn estimators or single sklearn estimator
+    estimators: list of sklearn estimators or single sklearn estimator, optional
         Can be a list of fitted sklearn estimators (one per fold) or a single sklearn
         estimator that will then be cloned and fitted on each fold.
-    cv: cross-validation generator
+    cv: cross-validation generator, optional
         A cross-validation generator object (e.g., KFold, StratifiedKFold).
     statistical_test : callable or str, default="nb-ttest"
         Statistical test function for computing p-values from importance scores.
@@ -360,9 +360,9 @@ class BasePerturbationCV(BaseVariableImportance):
 
     def __init__(
         self,
-        estimators=None,
-        cv=None,
-        statistical_test="nb-ttest",
+        estimators: object | None =None,
+        cv: object | None =None,
+        statistical_test: callable | str="nb-ttest",
         n_jobs: int = 1,
     ):
         self.estimators = estimators
@@ -379,7 +379,7 @@ class BasePerturbationCV(BaseVariableImportance):
     def __sklearn_is_fitted__(self):
         return hasattr(self, "estimators_")
 
-    def _initial_fit(self, estimators, cv, X, y):
+    def _initial_fit(self, estimators: object, cv: object | None, X: Sequence, y: Sequence) -> object:
         """Initial fit of the sklearn estimators on each fold.
         If the estimators are already fitted, they are used as is. Otherwise,
         they are cloned and fitted on each fold.
@@ -390,7 +390,7 @@ class BasePerturbationCV(BaseVariableImportance):
             Can be a list of fitted sklearn estimators (one per fold) or a
             single sklearn estimator that will then be cloned and fitted on
             each fold.
-        cv: cross-validation generator
+        cv: cross-validation generator, optional
             A cross-validation generator object (e.g., KFold, StratifiedKFold).
         X: array-like of shape (n_samples, n_features)
             The input samples.
@@ -447,7 +447,7 @@ class BasePerturbationCV(BaseVariableImportance):
             )
         return fitted_estimators
 
-    def fit(self, X, y):
+    def fit(self, X: Sequence, y: Sequence) -> object:
         """
         Fit the importance estimators on each fold of the cross-validation.
         """
@@ -482,7 +482,7 @@ class BasePerturbationCV(BaseVariableImportance):
         self.n_features_in_ = self.estimators_[0].n_features_in_
         return self
 
-    def _importance_single_split(self, importance_estimator, X_test, y_test):
+    def _importance_single_split(self, importance_estimator: object, X_test: Sequence, y_test: Sequence) -> object:
         """
         Compute the importance scores for each group of features for a train/test split.
         """
@@ -490,7 +490,7 @@ class BasePerturbationCV(BaseVariableImportance):
 
         return importance_estimator
 
-    def importance(self, X, y):
+    def importance(self, X: Sequence, y: Sequence) -> np.ndarray:
         """
         Compute the importance scores using cross-validation.
 
@@ -532,7 +532,7 @@ class BasePerturbationCV(BaseVariableImportance):
 
         return self.importances_
 
-    def fit_importance(self, X, y):
+    def fit_importance(self, X: Sequence, y: Sequence) -> np.ndarray:
         """
         Fit the model to the data and computes feature importance scores."""
         self.fit(X, y)

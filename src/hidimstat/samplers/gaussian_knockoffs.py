@@ -8,7 +8,7 @@ from sklearn.utils.validation import check_array, check_is_fitted
 
 from hidimstat._utils.utils import check_random_state
 
-
+from collections.abc import Sequence
 class GaussianKnockoffs(BaseEstimator):
     r"""
     Generator for second-order Gaussian variables using the equi-correlated method.
@@ -17,7 +17,7 @@ class GaussianKnockoffs(BaseEstimator):
 
     Parameters
     ----------
-    cov_estimator : object
+    cov_estimator : object, optional
         Estimator for computing the covariance matrix. Must implement fit and
         have a `covariance_` attribute after fitting.
     tol : float, default=1e-14
@@ -36,15 +36,15 @@ class GaussianKnockoffs(BaseEstimator):
     .. footbibliography::
     """
 
-    def __init__(self, cov_estimator=None, tol=1e-14):
+    def __init__(self, cov_estimator: object | None =None, tol: float =1e-14):
         self.cov_estimator = cov_estimator
         self.tol = tol
 
     def fit(
         self,
-        X,
-        y=None,  # noqa: ARG002
-    ):
+        X: Sequence,
+        y: any =None,  # noqa: ARG002
+    ) -> object:
         """
         Fit the Gaussian synthetic variable generator.
         This method estimates the parameters needed to generate Gaussian synthetic variables
@@ -129,8 +129,8 @@ class GaussianKnockoffs(BaseEstimator):
     def sample(
         self,
         n_repeats: int = 1,
-        random_state=None,
-    ):
+        random_state: int | None =None,
+    ) -> np.ndarray:
         """
         Generate synthetic variables.
         This function generates synthetic variables that preserve the covariance structure
@@ -164,7 +164,7 @@ class GaussianKnockoffs(BaseEstimator):
         return np.stack(X_tildes)
 
 
-def _s_equi(sigma, tol=1e-14):
+def _s_equi(sigma: np.ndarray, tol: float | None =1e-14) -> np.ndarray:
     """
     Estimate the diagonal matrix of correlation between real
     and knockoff variables using the equi-correlated equation.

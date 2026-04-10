@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def quantile_aggregation(pvals, gamma=0.5, adaptive=False):
+def quantile_aggregation(pvals: np.ndarray, gamma: float =0.5, adaptive: bool =False) -> np.ndarray:
     """
     Implements the quantile aggregation method for p-values.
 
@@ -44,7 +44,7 @@ def quantile_aggregation(pvals, gamma=0.5, adaptive=False):
         return _fixed_quantile_aggregation(pvals, gamma)
 
 
-def _fixed_quantile_aggregation(pvals, gamma=0.5):
+def _fixed_quantile_aggregation(pvals: np.ndarray, gamma: float =0.5) -> np.ndarray:
     """
     Quantile aggregation function
 
@@ -55,7 +55,7 @@ def _fixed_quantile_aggregation(pvals, gamma=0.5):
     pvals : 2D ndarray (n_sampling*2, n_test)
         p-value
 
-    gamma : float
+    gamma : float, default=0.5
         Percentile value used for aggregation.
 
     Returns
@@ -73,7 +73,7 @@ def _fixed_quantile_aggregation(pvals, gamma=0.5):
     return np.minimum(1, converted_score)
 
 
-def _adaptive_quantile_aggregation(pvals, gamma_min=0.05):
+def _adaptive_quantile_aggregation(pvals: np.ndarray, gamma_min: float =0.05) -> np.ndarray:
     """
     Adaptive version of quantile aggregation method
 

@@ -5,7 +5,7 @@ import numpy as np
 import seaborn as sns
 from sklearn.inspection import partial_dependence
 
-
+from collections.abc import Sequence
 class PDP:
     r"""
     Partial Dependence Plot (PDP) visualization. This class is based on
@@ -24,11 +24,11 @@ class PDP:
 
     """
 
-    def __init__(self, estimator, feature_names=None):
+    def __init__(self, estimator: object, feature_names: list[str]=None):
         self.estimator = estimator
         self.feature_names = feature_names
 
-    def plot(self, X, features, cmap="viridis", **kwargs):
+    def plot(self, X: Sequence, features: int | list[int], cmap: str | None ="viridis", **kwargs) -> object:
         """
         Plot the Partial Dependence Plot for the specified feature (1D) or pair of
         features (2D). The marginal distribution of the feature(s) is also displayed.
@@ -45,6 +45,11 @@ class PDP:
             Additional keyword arguments passed to:
             - `sns.lineplot` for 1D PDP
             - `ax.contour` for 2D PDP
+        
+        Returns
+        -------
+        plotting_func : object
+            Plotting function either in 1D or 2D.
         """
         if isinstance(features, int):
             feature_ids = [features]
@@ -65,7 +70,7 @@ class PDP:
         return plotting_func(pd, feature_names, cmap=cmap, **kwargs)
 
     @staticmethod
-    def _plot_1d(pd, feature_names, cmap=None, **kwargs):
+    def _plot_1d(pd: dict, feature_names: list, cmap: str | None =None, **kwargs) -> object:
         del cmap  # only there for API compatibility
         _, axes = plt.subplots(2, 1, height_ratios=[0.2, 1])
         ax = axes[0]
@@ -88,7 +93,7 @@ class PDP:
         return axes
 
     @staticmethod
-    def _plot_2d(pd, feature_names, cmap="viridis", **kwargs):
+    def _plot_2d(pd: dict, feature_names: list, cmap: str ="viridis", **kwargs) -> object:
         x = pd["grid_values"][0]
         y = pd["grid_values"][1]
         z = pd["average"][0]

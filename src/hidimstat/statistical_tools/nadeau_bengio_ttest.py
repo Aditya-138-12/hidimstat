@@ -7,11 +7,24 @@ from scipy.stats._stats_py import _var
 NBTtestResult = namedtuple("NBTtestResult", ["statistic", "pvalue"])
 NBTtestResult.__doc__ = "Class for Nadeau Bengio t-test"
 
-
-def _get_pvalue(df, statistic, alternative, symmetric=True):
+from typing import Literal
+from collections.abc import Sequence
+def _get_pvalue(df: Sequence, statistic: Sequence, alternative: Literal['less', 'greater', 'two-sided'], symmetric: bool =True) -> Sequence:
     """
     Get p-value given the statistic, (continuous) distribution, and alternative
     Based on https://github.com/scipy/scipy/blob/e407bc4d6ee71ec1a23fce9d95b58e28451e4d94/scipy/stats/_stats_py.py#L1571
+
+    Parameters
+    ----------
+    df : array_like
+    statistic : array_like
+        quantiles.
+    alternative : str
+        Defines the null and alternative hypotheses.
+
+    Returns
+    -------
+    pvalue : array-like or ndarray or float
     """
     if alternative == "less":
         pvalue = t.cdf(statistic, df)
@@ -31,12 +44,12 @@ def _get_pvalue(df, statistic, alternative, symmetric=True):
 
 
 def nadeau_bengio_ttest(
-    a,
+    a: Sequence,
     popmean,
-    test_frac,
-    axis=0,
-    alternative="greater",
-):
+    test_frac: float,
+    axis: int | None =0,
+    alternative: Literal['less', 'greater', 'two-sided'] ="greater",
+) -> object:
     """
     One-sample t-test with Nadeau & Bengio variance correction.
 

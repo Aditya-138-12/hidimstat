@@ -8,7 +8,7 @@ from scipy.stats import ttest_1samp, wilcoxon
 from hidimstat.statistical_tools.nadeau_bengio_ttest import nadeau_bengio_ttest
 
 
-def _check_vim_predict_method(method):
+def _check_vim_predict_method(method: str) -> str:
     """
     Validates that the method is a valid scikit-learn prediction method for variable importance measures.
 
@@ -37,7 +37,7 @@ def _check_vim_predict_method(method):
         )
 
 
-def get_fitted_attributes(cls):
+def get_fitted_attributes(cls: object) -> list:
     """
     Get all attributes from a class that end with a single underscore
     and doesn't start with one underscore.
@@ -69,8 +69,8 @@ def get_fitted_attributes(cls):
 
     return result
 
-
-def check_random_state(seed):
+from typing import Iterator
+def check_random_state(seed: bool | int | Iterator) -> object:
     """
     Modified version of sklearn's check_random_state using np.random.Generator.
     This is based on the implementation of check_random_state of sciktilearn:
@@ -113,7 +113,7 @@ def check_random_state(seed):
     )
 
 
-def seed_estimator(estimator, random_state=None):
+def seed_estimator(estimator: object, random_state: int | Iterator | bool[False] =None) -> object:
     """
     Sets the random_state for a scikit-learn estimator and its components.
 
@@ -143,8 +143,8 @@ def seed_estimator(estimator, random_state=None):
 
     return estimator
 
-
-def check_statistical_test(statistical_test, test_frac=None):
+from typing import Callable
+def check_statistical_test(statistical_test: str | Callable, test_frac: float | None =None) -> Callable:
     """
     Validates and returns a test statistic function.
 

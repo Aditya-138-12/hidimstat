@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 
-def _detection_section(lines):
+def _detection_section(lines: list[str]) -> list[list[str]]:
     """
     Detect sections in a numpy-style docstring by identifying section headers and their underlines.
 
@@ -28,7 +28,7 @@ def _detection_section(lines):
     return sections
 
 
-def _parse_docstring(docstring):
+def _parse_docstring(docstring: str) -> dict[str, str]:
     """
     Parse a numpy-style docstring into its component sections.
 
@@ -54,7 +54,7 @@ def _parse_docstring(docstring):
     return sections
 
 
-def _reindent(string):
+def _reindent(string: list[str]) -> str:
     """
     Reindent a string by stripping whitespace and normalizing line breaks.
 
@@ -75,7 +75,7 @@ def _reindent(string):
     return "\n".join(l.strip() for l in new_string.strip().split("\n"))
 
 
-def _aggregate_docstring(list_docstring, returns_docstring):
+def _aggregate_docstring(list_docstring: list[str], returns_docstring: list[str]) -> str:
     """
     Combine multiple numpy-style docstrings into a single docstring.
 
